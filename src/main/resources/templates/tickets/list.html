@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org"
+      th:replace="~{layout/base :: page('Tickets', ~{::section})}">
+<section class="stack">
+  <div class="row-between">
+    <h1 class="card-title" style="font-size: 20px;">Tickets y ventas</h1>
+  </div>
+
+  <div class="card stack">
+    <div class="row">
+      <input type="search"
+             name="q"
+             th:value="${q}"
+             placeholder="Buscar por folio (ej. T-000001)..."
+             th:hx-get="@{/tickets}"
+             hx-trigger="input changed delay:250ms, search"
+             hx-target="#ticket-rows"
+             hx-swap="outerHTML"/>
+    </div>
+
+    <table>
+      <thead>
+      <tr>
+        <th>Folio</th>
+        <th>Fecha</th>
+        <th>Estado</th>
+        <th class="num">Subtotal</th>
+        <th class="num">IVA</th>
+        <th class="num">Descuento</th>
+        <th class="num">Total</th>
+        <th>Acciones</th>
+      </tr>
+      </thead>
+      <tbody id="ticket-rows" th:replace="~{tickets/_table :: rows}"></tbody>
+    </table>
+  </div>
+</section>
+</html>

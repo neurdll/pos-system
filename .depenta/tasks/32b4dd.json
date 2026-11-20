@@ -1,0 +1,12 @@
+{
+  "id": "32b4dd",
+  "title": "Checkout: Split payments, change, atomic stock deduction",
+  "description": "Scope: V5__payments.sql (payments CASH/CARD/TRANSFER), payment/*, templates/pos/_checkout_modal.html. Mixed/split tenders, validate paid >= total, compute cash change, mark sale PAID and deduct stock_qty atomically. Forbidden: No external payment gateway SDKs.",
+  "status": "done",
+  "priority": "high",
+  "depends_on": [
+    "56cc2a"
+  ],
+  "created_at": 1795135738,
+  "updated_at": 1795136922
+}

@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<body>
+<div th:fragment="grid" id="pos-product-grid" class="form-grid">
+  <div th:if="${#lists.isEmpty(products)}" class="muted">No hay productos activos que coincidan.</div>
+  <button th:each="p : ${products}"
+          type="button"
+          class="card stack"
+          style="text-align: left; cursor: pointer;"
+          th:disabled="${p.trackInventory && p.stockQty <= 0}"
+          th:hx-post="@{/pos/cart/items/{id}(id=${p.id})}"
+          hx-target="#cart-panel"
+          hx-swap="outerHTML">
+    <div class="row-between">
+      <strong th:text="${p.name}">Producto</strong>
+      <span class="num" th:text="${@money.format(p.priceCents)}">$0.00</span>
+    </div>
+    <div class="row-between muted">
+      <span th:text="${p.sku}">SKU</span>
+      <span th:text="${p.trackInventory ? ('Stock: ' + p.stockQty) : 'Sin control'}">Stock: 0</span>
+    </div>
+  </button>
+</div>
+</body>
+</html>

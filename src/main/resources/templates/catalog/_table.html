@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+<body>
+<tbody th:fragment="rows" id="product-rows">
+  <tr th:if="${#lists.isEmpty(products)}">
+    <td colspan="9" class="muted">Sin productos registrados.</td>
+  </tr>
+  <th:block th:each="p : ${products}">
+    <tr th:replace="~{catalog/_table :: row(${p})}"></tr>
+  </th:block>
+</tbody>
+
+<tr th:fragment="row(p)">
+  <td><code th:text="${p.sku}">SKU</code></td>
+  <td th:text="${p.barcode ?: '—'}">—</td>
+  <td th:text="${p.name}">Nombre</td>
+  <td th:text="${p.category ?: '—'}">—</td>
+  <td class="num" th:text="${@money.format(p.priceCents)}">$0.00</td>
+  <td class="num" th:text="${p.taxRateBps / 100 + '%'}">16%</td>
+  <td class="num" th:text="${p.trackInventory ? p.stockQty : 'N/A'}">0</td>
+  <td>
+    <span class="badge"
+          th:classappend="${p.active} ? ' badge-success' : ' badge-danger'"
+          th:text="${p.active} ? 'Activo' : 'Inactivo'">Activo</span>
+  </td>
+  <td sec:authorize="hasRole('ADMIN')">
+    <div class="row">
+      <a th:href="@{/catalog/{id}/edit(id=${p.id})}" class="btn btn-sm">Editar</a>
+      <button type="button"
+              class="btn btn-sm"
+              th:hx-post="@{/catalog/{id}/toggle(id=${p.id})}"
+              hx-target="closest tr"
+              hx-swap="outerHTML"
+              th:text="${p.active} ? 'Desactivar' : 'Activar'">Desactivar</button>
+    </div>
+  </td>
+</tr>
+
+<th:block th:fragment="toggledRow">
+  <tr th:replace="~{catalog/_table :: row(${p})}"></tr>
+  <th:block th:replace="~{fragments/toast :: oob(${message}, ${kind})}"></th:block>
+</th:block>
+</body>
+</html>

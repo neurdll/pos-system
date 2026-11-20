@@ -1,0 +1,17 @@
+{
+  "id": "f322b7",
+  "title": "Reports: Daily & shift summaries by tender, top products, low stock",
+  "description": "Scope: report/*, templates/reports/*. Read-only aggregate projections for Corte X/Z, sales by payment method, net after returns, top items, low-stock alerts with HTMX filters. Forbidden: No BI export libraries or charting frameworks.",
+  "status": "done",
+  "priority": "medium",
+  "depends_on": [
+    "32b4dd",
+    "e729fe",
+    "e85258"
+  ],
+  "related": [
+    "680a09"
+  ],
+  "created_at": 1795135738,
+  "updated_at": 1795137640
+}

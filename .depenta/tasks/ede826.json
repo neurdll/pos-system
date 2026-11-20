@@ -1,0 +1,15 @@
+{
+  "id": "ede826",
+  "title": "UI Shell: Base layout, vendored HTMX + Alpine.js, CSRF, plain CSS",
+  "description": "Scope: static/vendor/htmx.min.js (v2 stable), static/vendor/alpine.min.js, static/css/pos.css, templates/layout/base.html, shared Money formatter. Wire Spring Security CSRF meta into hx-headers + toast OOB target. Forbidden: No CDN links, no npm/Tailwind build.",
+  "status": "done",
+  "priority": "high",
+  "depends_on": [
+    "91cfc5"
+  ],
+  "related": [
+    "6d3300"
+  ],
+  "created_at": 1795135738,
+  "updated_at": 1795136169
+}

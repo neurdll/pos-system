@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<body>
+<tbody th:fragment="rows" id="ticket-rows">
+  <tr th:if="${#lists.isEmpty(tickets)}">
+    <td colspan="8" class="muted">Sin tickets registrados.</td>
+  </tr>
+  <tr th:each="t : ${tickets}">
+    <td><code th:text="${t.ticketNumber}">T-000001</code></td>
+    <td th:text="${t.completedAt != null ? #temporals.format(t.completedAt, 'yyyy-MM-dd HH:mm') : '—'}">—</td>
+    <td>
+      <span class="badge"
+            th:classappend="${t.status.name() == 'PAID'} ? ' badge-success' : ' badge-warning'"
+            th:text="${t.status}">PAID</span>
+    </td>
+    <td class="num" th:text="${@money.format(t.subtotalCents)}">$0.00</td>
+    <td class="num" th:text="${@money.format(t.taxCents)}">$0.00</td>
+    <td class="num" th:text="${@money.format(t.discountCents)}">$0.00</td>
+    <td class="num"><strong th:text="${@money.format(t.totalCents)}">$0.00</strong></td>
+    <td>
+      <div class="row">
+        <a th:href="@{/tickets/{id}/print(id=${t.id})}" target="_blank" class="btn btn-sm">Imprimir</a>
+        <a th:if="${t.status.name() == 'PAID' || t.status.name() == 'PARTIAL_RETURN'}"
+           th:href="@{/returns/new(saleId=${t.id})}" class="btn btn-sm">Devolver</a>
+      </div>
+    </td>
+  </tr>
+</tbody>
+</body>
+</html>

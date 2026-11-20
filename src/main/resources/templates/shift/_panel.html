@@ -1,0 +1,103 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<body>
+<div th:fragment="panel" id="shift-panel" class="pos-grid">
+  <div class="stack">
+    <div class="card stack">
+      <div class="row-between">
+        <h2 class="card-title" th:text="${'Turno abierto #' + openShift.id}">Turno abierto</h2>
+        <span class="badge badge-success">OPEN</span>
+      </div>
+
+      <table>
+        <tbody>
+        <tr><td>Fondo inicial</td><td class="num" th:text="${@money.format(summary.openingFloatCents)}">$0.00</td></tr>
+        <tr><td>Ventas en efectivo</td><td class="num" th:text="${@money.format(summary.cashSalesCents)}">$0.00</td></tr>
+        <tr><td>Devoluciones en efectivo</td><td class="num" th:text="${@money.format(summary.cashRefundsCents)}">$0.00</td></tr>
+        <tr><td>Entradas de caja (+)</td><td class="num" th:text="${@money.format(summary.cashInCents)}">$0.00</td></tr>
+        <tr><td>Retiros de caja (-)</td><td class="num" th:text="${@money.format(summary.cashOutCents)}">$0.00</td></tr>
+        <tr><th>Efectivo esperado en caja</th><th class="num" th:text="${@money.format(summary.expectedCashCents)}">$0.00</th></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <div class="card stack">
+      <h3 class="card-title">Movimientos de efectivo</h3>
+      <form th:hx-post="@{/shifts/movements}"
+            hx-target="#shift-panel"
+            hx-swap="outerHTML"
+            class="form-grid">
+        <div>
+          <label for="mov-type">Tipo</label>
+          <select id="mov-type" name="type">
+            <option value="IN">Entrada (+)</option>
+            <option value="OUT">Retiro (-)</option>
+          </select>
+        </div>
+        <div>
+          <label for="mov-amount">Monto ($)</label>
+          <input id="mov-amount" name="amount" type="number" step="0.01" min="0.01" required/>
+        </div>
+        <div>
+          <label for="mov-reason">Motivo</label>
+          <input id="mov-reason" name="reason" type="text" placeholder="Ej. Cambio o pago proveedor" required/>
+        </div>
+        <div style="display:flex; align-items:flex-end;">
+          <button type="submit" class="btn btn-primary btn-block">Registrar</button>
+        </div>
+      </form>
+
+      <table>
+        <thead>
+        <tr>
+          <th>Tipo</th>
+          <th>Motivo</th>
+          <th class="num">Monto</th>
+        </tr>
+        </thead>
+        <tbody>
+        <tr th:if="${#lists.isEmpty(movements)}">
+          <td colspan="3" class="muted">Sin movimientos en este turno.</td>
+        </tr>
+        <tr th:each="m : ${movements}">
+          <td>
+            <span class="badge"
+                  th:classappend="${m.type.name() == 'IN'} ? ' badge-success' : ' badge-warning'"
+                  th:text="${m.type.name()}">IN</span>
+          </td>
+          <td th:text="${m.reason}">Motivo</td>
+          <td class="num" th:text="${@money.format(m.amountCents)}">$0.00</td>
+        </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <div class="card stack"
+       x-data="{ expected: [[${summary.expectedCashCents}]], counted: '' }">
+    <h2 class="card-title">Cerrar turno (Corte de caja)</h2>
+    <form th:action="@{/shifts/close}" method="post" class="stack">
+      <div>
+        <label for="countedCash">Efectivo contado en caja ($)</label>
+        <input id="countedCash" name="countedCash" type="number" step="0.01" min="0"
+               x-model="counted" required/>
+      </div>
+      <div class="row-between muted" x-show="counted !== ''">
+        <span>Diferencia estimada:</span>
+        <strong x-text="((Math.round(parseFloat(counted || 0) * 100) - expected) / 100).toFixed(2)">0.00</strong>
+      </div>
+      <div>
+        <label for="notes">Notas del corte</label>
+        <input id="notes" name="notes" type="text" placeholder="Opcional"/>
+      </div>
+      <button type="submit" class="btn btn-danger btn-block">Cerrar turno</button>
+    </form>
+  </div>
+</div>
+
+<th:block th:fragment="panelWithToast">
+  <div th:replace="~{shift/_panel :: panel}"></div>
+  <th:block th:replace="~{fragments/toast :: oob(${message}, ${kind})}"></th:block>
+</th:block>
+</body>
+</html>

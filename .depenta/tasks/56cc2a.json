@@ -1,0 +1,14 @@
+{
+  "id": "56cc2a",
+  "title": "Sale Cart: POS counter UI, HTMX cart fragments, pure pricing",
+  "description": "Scope: V4__sales.sql (sales, sale_items), sale/*, templates/pos/*. Barcode/SKU quick-add, Alpine keyboard shortcuts (F2/F4), pure PricingCalculator record, server-authoritative HTMX cart updates; requires open shift. Forbidden: No restaurant tables or kitchen routing.",
+  "status": "done",
+  "priority": "high",
+  "depends_on": [
+    "d5a454",
+    "e85258",
+    "ede826"
+  ],
+  "created_at": 1795135738,
+  "updated_at": 1795136778
+}

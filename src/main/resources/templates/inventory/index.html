@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security"
+      th:replace="~{layout/base :: page('Inventario', ~{::section})}">
+<section class="stack">
+  <div class="row-between">
+    <h1 class="card-title" style="font-size: 20px;">Inventario y Kardex</h1>
+  </div>
+
+  <div th:if="${success}" class="badge badge-success" th:text="${success}">OK</div>
+  <div th:if="${error}" class="badge badge-danger" th:text="${error}">Error</div>
+
+  <div sec:authorize="hasRole('ADMIN')" class="card stack">
+    <h2 class="card-title">Registrar entrada o ajuste</h2>
+    <form th:action="@{/inventory/adjust}" method="post" class="form-grid" style="align-items: end;">
+      <div>
+        <label for="adj-product">Producto</label>
+        <select id="adj-product" name="productId" required>
+          <option value="">Selecciona producto...</option>
+          <option th:each="p : ${products}"
+                  th:if="${p.trackInventory}"
+                  th:value="${p.id}"
+                  th:text="${p.name + ' (' + p.sku + ' · Stock: ' + p.stockQty + ')'}">Producto</option>
+        </select>
+      </div>
+      <div>
+        <label for="adj-type">Tipo</label>
+        <select id="adj-type" name="type">
+          <option value="PURCHASE">Compra / Entrada (+)</option>
+          <option value="ADJUSTMENT">Ajuste (+/-)</option>
+        </select>
+      </div>
+      <div>
+        <label for="adj-qty">Delta cantidad</label>
+        <input id="adj-qty" name="qtyDelta" type="number" required placeholder="Ej. 10 o -2"/>
+      </div>
+      <div>
+        <label for="adj-note">Nota</label>
+        <input id="adj-note" name="note" type="text" placeholder="Ej. Conteo físico o factura"/>
+      </div>
+      <div>
+        <button type="submit" class="btn btn-primary btn-block">Aplicar</button>
+      </div>
+    </form>
+  </div>
+
+  <div class="card stack">
+    <form th:hx-get="@{/inventory}"
+          hx-target="#kardex-rows"
+          hx-swap="outerHTML"
+          hx-trigger="change"
+          class="form-grid">
+      <div>
+        <label for="filter-product">Filtrar por producto</label>
+        <select id="filter-product" name="productId">
+          <option value="">Todos los productos</option>
+          <option th:each="p : ${products}"
+                  th:value="${p.id}"
+                  th:selected="${selectedProductId != null && selectedProductId == p.id}"
+                  th:text="${p.name + ' (' + p.sku + ')'}">Producto</option>
+        </select>
+      </div>
+      <div>
+        <label for="filter-type">Filtrar por tipo</label>
+        <select id="filter-type" name="type">
+          <option value="">Todos los movimientos</option>
+          <option th:each="t : ${types}"
+                  th:value="${t}"
+                  th:selected="${selectedType != null && selectedType == t}"
+                  th:text="${t}">SALE</option>
+        </select>
+      </div>
+    </form>
+
+    <table>
+      <thead>
+      <tr>
+        <th>Fecha</th>
+        <th>Producto</th>
+        <th>Tipo</th>
+        <th class="num">Movimiento</th>
+        <th>Nota</th>
+        <th>Operador</th>
+      </tr>
+      </thead>
+      <tbody id="kardex-rows" th:replace="~{inventory/_kardex :: rows}"></tbody>
+    </table>
+  </div>
+</section>
+</html>

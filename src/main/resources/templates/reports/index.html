@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org"
+      th:replace="~{layout/base :: page('Reportes', ~{::section})}">
+<section class="stack">
+  <div class="row-between">
+    <h1 class="card-title" style="font-size: 20px;">Reportes y Cortes (X / Z)</h1>
+  </div>
+
+  <form th:hx-get="@{/reports}"
+        hx-target="#report-content"
+        hx-swap="outerHTML"
+        hx-trigger="change"
+        class="card form-grid">
+    <div>
+      <label for="rep-date">Fecha</label>
+      <input id="rep-date" type="date" name="date" th:value="${selectedDate}"/>
+    </div>
+    <div>
+      <label for="rep-shift">Turno (Corte X / Z)</label>
+      <select id="rep-shift" name="shiftId">
+        <option value="">Último turno</option>
+        <option th:each="s : ${recentShifts}"
+                th:value="${s.id}"
+                th:selected="${selectedShiftId != null && selectedShiftId == s.id}"
+                th:text="${'Turno #' + s.id + ' (' + s.status + ')'}">Turno #1</option>
+      </select>
+    </div>
+    <div>
+      <label for="rep-stock">Umbral stock bajo</label>
+      <input id="rep-stock" type="number" name="lowStockThreshold" min="0" th:value="${lowStockThreshold}"/>
+    </div>
+  </form>
+
+  <div th:replace="~{reports/_summary :: content}"></div>
+</section>
+</html>

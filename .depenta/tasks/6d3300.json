@@ -1,0 +1,15 @@
+{
+  "id": "6d3300",
+  "title": "Auth: ADMIN/CASHIER login + quick cashier PIN switch",
+  "description": "Scope: V1__users.sql, auth/SecurityConfig, auth/PinSwitchController, templates/login.html, dev seed users. Support shared-terminal PIN switch without full logout. Forbidden: No OAuth/JWT/multi-tenant tables.",
+  "status": "done",
+  "priority": "high",
+  "depends_on": [
+    "91cfc5"
+  ],
+  "related": [
+    "ede826"
+  ],
+  "created_at": 1795135738,
+  "updated_at": 1795136268
+}

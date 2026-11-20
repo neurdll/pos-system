@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{layout/base :: head('Ticket ' + ${sale.ticketNumber})}"></head>
+<body style="background: #fff;">
+<div class="container" style="max-width: 360px; margin: 16px auto;">
+  <div class="no-print row-between" style="margin-bottom: 12px;">
+    <a th:href="@{/tickets}" class="btn btn-sm">Volver</a>
+    <button type="button" class="btn btn-primary btn-sm" onclick="window.print()">Imprimir ticket</button>
+  </div>
+
+  <article class="card stack" style="font-family: var(--font-mono); font-size: 12px; border-style: dashed;">
+    <div style="text-align: center;">
+      <strong style="font-size: 15px;">POINT OF SALE</strong>
+      <div class="muted">Ticket de Venta</div>
+      <div style="margin-top: 4px; font-weight: 700;" th:text="${sale.ticketNumber}">T-000001</div>
+      <div class="muted" th:text="${sale.completedAt != null ? #temporals.format(sale.completedAt, 'yyyy-MM-dd HH:mm') : ''}">Fecha</div>
+      <div class="muted" th:text="${'Atendió: ' + cashierName}">Cajero</div>
+    </div>
+
+    <hr style="border: 0; border-top: 1px dashed var(--border); width: 100%; margin: 4px 0;"/>
+
+    <table>
+      <thead>
+      <tr>
+        <th style="background: transparent; padding: 4px 0;">Cant. Descripción</th>
+        <th class="num" style="background: transparent; padding: 4px 0;">Importe</th>
+      </tr>
+      </thead>
+      <tbody>
+      <tr th:each="item : ${items}">
+        <td style="padding: 4px 0;">
+          <div th:text="${item.qty + ' x ' + item.productNameSnapshot}">1 x Producto</div>
+          <div class="muted" th:text="${@money.format(item.unitPriceCents) + ' c/u · ' + item.skuSnapshot}">$0.00</div>
+        </td>
+        <td class="num" style="padding: 4px 0;" th:text="${@money.format(item.lineTotalCents)}">$0.00</td>
+      </tr>
+      </tbody>
+    </table>
+
+    <hr style="border: 0; border-top: 1px dashed var(--border); width: 100%; margin: 4px 0;"/>
+
+    <table>
+      <tbody>
+      <tr><td style="padding: 2px 0; border: 0;">Subtotal</td><td class="num" style="padding: 2px 0; border: 0;" th:text="${@money.format(sale.subtotalCents)}">$0.00</td></tr>
+      <tr><td style="padding: 2px 0; border: 0;">IVA incluido</td><td class="num" style="padding: 2px 0; border: 0;" th:text="${@money.format(sale.taxCents)}">$0.00</td></tr>
+      <tr th:if="${sale.discountCents > 0}">
+        <td style="padding: 2px 0; border: 0;">Descuento</td>
+        <td class="num" style="padding: 2px 0; border: 0;" th:text="${'-' + @money.format(sale.discountCents)}">-$0.00</td>
+      </tr>
+      <tr>
+        <th style="background: transparent; padding: 4px 0; border: 0; font-size: 14px;">TOTAL</th>
+        <th class="num" style="background: transparent; padding: 4px 0; border: 0; font-size: 14px;" th:text="${@money.format(sale.totalCents)}">$0.00</th>
+      </tr>
+      </tbody>
+    </table>
+
+    <hr style="border: 0; border-top: 1px dashed var(--border); width: 100%; margin: 4px 0;"/>
+
+    <div class="stack" style="gap: 4px;">
+      <div class="muted">Formas de pago</div>
+      <div th:each="p : ${payments}" class="row-between">
+        <span th:text="${p.method + (p.reference != null ? ' (' + p.reference + ')' : '')}">CASH</span>
+        <span th:text="${@money.format(p.tenderedCents)}">$0.00</span>
+      </div>
+      <div class="row-between">
+        <span>Total recibido</span>
+        <span th:text="${@money.format(totalTenderedCents)}">$0.00</span>
+      </div>
+      <div class="row-between" th:if="${totalChangeCents > 0}">
+        <strong>Cambio</strong>
+        <strong th:text="${@money.format(totalChangeCents)}">$0.00</strong>
+      </div>
+    </div>
+
+    <div style="text-align: center; margin-top: 6px;" class="muted">¡Gracias por su compra!</div>
+  </article>
+</div>
+</body>
+</html>

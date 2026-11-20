@@ -1,0 +1,13 @@
+{
+  "id": "d5a454",
+  "title": "Catalog: Product CRUD, SKU/barcode lookup, HTMX search",
+  "description": "Scope: V2__catalog.sql (products with price_cents, tax_rate_bps, stock_qty), catalog/*, templates/catalog/*. Live HTMX search by name/SKU/barcode + inline active toggle. Forbidden: No size/color variant matrices or multi-branch stock.",
+  "status": "done",
+  "priority": "high",
+  "depends_on": [
+    "91cfc5",
+    "ede826"
+  ],
+  "created_at": 1795135738,
+  "updated_at": 1795136417
+}

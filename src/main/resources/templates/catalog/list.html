@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security"
+      th:replace="~{layout/base :: page('Catálogo', ~{::section})}">
+<section class="stack">
+  <div class="row-between">
+    <h1 class="card-title" style="font-size: 20px;">Catálogo de productos</h1>
+    <a sec:authorize="hasRole('ADMIN')" th:href="@{/catalog/new}" class="btn btn-primary">+ Nuevo producto</a>
+  </div>
+
+  <div th:if="${param.saved}" class="badge badge-success">Producto guardado correctamente.</div>
+
+  <div class="card stack">
+    <div class="row">
+      <input type="search"
+             name="q"
+             th:value="${q}"
+             placeholder="Buscar por nombre, SKU o código de barras..."
+             th:hx-get="@{/catalog}"
+             hx-trigger="input changed delay:250ms, search"
+             hx-target="#product-rows"
+             hx-swap="outerHTML"/>
+    </div>
+
+    <table>
+      <thead>
+      <tr>
+        <th>SKU</th>
+        <th>Código</th>
+        <th>Producto</th>
+        <th>Categoría</th>
+        <th class="num">Precio</th>
+        <th class="num">IVA</th>
+        <th class="num">Stock</th>
+        <th>Estado</th>
+        <th sec:authorize="hasRole('ADMIN')">Acciones</th>
+      </tr>
+      </thead>
+      <tbody id="product-rows" th:replace="~{catalog/_table :: rows}"></tbody>
+    </table>
+  </div>
+</section>
+</html>

@@ -1,0 +1,12 @@
+{
+  "id": "3fb88b",
+  "title": "Tickets: Print-ready HTML/CSS receipt & ticket lookup",
+  "description": "Scope: ticket/*, templates/tickets/print.html (@media print), templates/tickets/list.html. Folio search, itemized lines, tax breakdown, split tenders + change. Forbidden: No raw ESC/POS printer drivers or PDF libraries.",
+  "status": "done",
+  "priority": "medium",
+  "depends_on": [
+    "32b4dd"
+  ],
+  "created_at": 1795135738,
+  "updated_at": 1795137388
+}

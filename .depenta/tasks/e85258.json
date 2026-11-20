@@ -1,0 +1,13 @@
+{
+  "id": "e85258",
+  "title": "Shifts: Cash register open, cash in/out, corte de caja",
+  "description": "Scope: V3__shifts.sql (cash_shifts, cash_movements), shift/*, templates/shift/*. Open shift float, cash in/out, close with pure ShiftSummary record calculating expected cash and variance. Forbidden: No multi-register hardware drawer hooks.",
+  "status": "done",
+  "priority": "high",
+  "depends_on": [
+    "6d3300",
+    "ede826"
+  ],
+  "created_at": 1795135738,
+  "updated_at": 1795136551
+}

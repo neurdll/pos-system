@@ -1,0 +1,110 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<body>
+<aside th:fragment="panel" id="cart-panel" class="card stack">
+  <div class="row-between">
+    <h2 class="card-title">Ticket actual</h2>
+    <button th:if="${!#lists.isEmpty(cartItems)}"
+            type="button"
+            class="btn btn-sm"
+            th:hx-post="@{/pos/cart/clear}"
+            hx-target="#cart-panel"
+            hx-swap="outerHTML">Vaciar</button>
+  </div>
+
+  <div th:if="${lastTicketNumber != null}" class="badge badge-success row-between" style="display:flex;">
+    <span th:text="${'Cobrado: ' + lastTicketNumber + (lastChangeCents > 0 ? ' · Cambio: ' + @money.format(lastChangeCents) : '')}">Cobrado</span>
+    <a th:href="@{/tickets/{id}/print(id=${lastTicketId})}" target="_blank" style="color: inherit; text-decoration: underline;">Imprimir</a>
+  </div>
+
+  <div th:if="${#lists.isEmpty(cartItems)}" class="muted" style="padding: 20px 0;">
+    Escanea un código o selecciona un producto para iniciar la venta.
+  </div>
+
+  <table th:if="${!#lists.isEmpty(cartItems)}">
+    <thead>
+    <tr>
+      <th>Artículo</th>
+      <th>Cant.</th>
+      <th class="num">Importe</th>
+    </tr>
+    </thead>
+    <tbody>
+    <tr th:each="item : ${cartItems}">
+      <td>
+        <div th:text="${item.productNameSnapshot}" style="font-weight: 600;">Producto</div>
+        <div class="muted" th:text="${@money.format(item.unitPriceCents) + ' c/u'}">$0.00</div>
+      </td>
+      <td>
+        <div class="row" style="gap: 4px;">
+          <button type="button" class="btn btn-sm"
+                  th:hx-post="@{/pos/cart/items/{id}/qty(id=${item.id})}"
+                  hx-vals='{"delta":-1}'
+                  hx-target="#cart-panel"
+                  hx-swap="outerHTML">-</button>
+          <span th:text="${item.qty}" style="min-width: 20px; text-align: center;">1</span>
+          <button type="button" class="btn btn-sm"
+                  th:hx-post="@{/pos/cart/items/{id}/qty(id=${item.id})}"
+                  hx-vals='{"delta":1}'
+                  hx-target="#cart-panel"
+                  hx-swap="outerHTML">+</button>
+          <button type="button" class="btn btn-sm"
+                  th:hx-post="@{/pos/cart/items/{id}/qty(id=${item.id})}"
+                  hx-vals='{"qty":0}'
+                  hx-target="#cart-panel"
+                  hx-swap="outerHTML"
+                  title="Quitar">×</button>
+        </div>
+      </td>
+      <td class="num" th:text="${@money.format(item.lineTotalCents)}">$0.00</td>
+    </tr>
+    </tbody>
+  </table>
+
+  <form th:if="${!#lists.isEmpty(cartItems)}"
+        th:hx-post="@{/pos/cart/discount}"
+        hx-target="#cart-panel"
+        hx-swap="outerHTML"
+        class="row">
+    <input type="number" step="0.01" min="0" name="discount"
+           th:value="${sale != null ? T(java.math.BigDecimal).valueOf(sale.discountCents, 2) : '0.00'}"
+           aria-label="Descuento"/>
+    <button type="submit" class="btn btn-sm">Aplicar desc.</button>
+  </form>
+
+  <table th:if="${sale != null}">
+    <tbody>
+    <tr><td>Subtotal</td><td class="num" th:text="${@money.format(sale.subtotalCents)}">$0.00</td></tr>
+    <tr><td>IVA incluido</td><td class="num" th:text="${@money.format(sale.taxCents)}">$0.00</td></tr>
+    <tr th:if="${sale.discountCents > 0}">
+      <td>Descuento</td>
+      <td class="num" th:text="${'-' + @money.format(sale.discountCents)}">-$0.00</td>
+    </tr>
+    <tr>
+      <th style="font-size: 16px;">Total</th>
+      <th class="num" style="font-size: 16px;" th:text="${@money.format(sale.totalCents)}">$0.00</th>
+    </tr>
+    </tbody>
+  </table>
+
+  <button id="checkout-btn"
+          type="button"
+          class="btn btn-primary btn-block"
+          th:disabled="${sale == null || #lists.isEmpty(cartItems)}"
+          th:hx-get="@{/pos/checkout}"
+          hx-target="#modal-root"
+          hx-swap="outerHTML">Cobrar (F4)</button>
+</aside>
+
+<th:block th:fragment="panelWithToast">
+  <aside th:replace="~{pos/_cart :: panel}"></aside>
+  <th:block th:replace="~{fragments/toast :: oob(${message}, ${kind})}"></th:block>
+</th:block>
+
+<th:block th:fragment="panelAfterCheckout">
+  <aside th:replace="~{pos/_cart :: panel}"></aside>
+  <div id="modal-root" hx-swap-oob="outerHTML:#modal-root"></div>
+  <th:block th:replace="~{fragments/toast :: oob(${message}, ${kind})}"></th:block>
+</th:block>
+</body>
+</html>

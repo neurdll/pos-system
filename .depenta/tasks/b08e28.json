@@ -1,0 +1,16 @@
+{
+  "id": "b08e28",
+  "title": "E2E Verification: Full counter-to-corte integration test suite",
+  "description": "Scope: src/test/... Integration test covering login -> PIN switch -> open shift -> cart -> split payment -> ticket print -> partial return -> close shift variance -> daily report. Forbidden: Do not mock away DB/Flyway.",
+  "status": "done",
+  "priority": "low",
+  "depends_on": [
+    "3fb88b",
+    "680a09",
+    "6d3300",
+    "e729fe",
+    "f322b7"
+  ],
+  "created_at": 1795135738,
+  "updated_at": 1795137688
+}

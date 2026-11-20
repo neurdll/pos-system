@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html lang="es"
+      xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="http://www.thymeleaf.org/extras/spring-security"
+      th:fragment="page(title, content)">
+<head th:fragment="head(title)">
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1"/>
+  <meta name="_csrf" th:if="${_csrf != null}" th:content="${_csrf.token}"/>
+  <meta name="_csrf_header" th:if="${_csrf != null}" th:content="${_csrf.headerName}"/>
+  <title th:text="${title} + ' · POS'">POS</title>
+  <link rel="stylesheet" th:href="@{/css/pos.css}"/>
+  <script th:src="@{/vendor/htmx.min.js}"></script>
+  <script th:src="@{/vendor/alpine.min.js}" defer></script>
+  <script>
+    document.addEventListener('htmx:configRequest', function (event) {
+      const token = document.querySelector('meta[name="_csrf"]')?.content;
+      const header = document.querySelector('meta[name="_csrf_header"]')?.content;
+      if (token && header) {
+        event.detail.headers[header] = token;
+      }
+    });
+  </script>
+</head>
+<body>
+<header class="topbar no-print">
+  <div class="row">
+    <a class="topbar-brand" th:href="@{/pos}">POS</a>
+    <nav class="topbar-nav">
+      <a th:href="@{/pos}">Mostrador</a>
+      <a th:href="@{/catalog}">Catálogo</a>
+      <a th:href="@{/shifts}">Caja</a>
+      <a th:href="@{/tickets}">Tickets</a>
+      <a th:href="@{/inventory}">Inventario</a>
+      <a th:href="@{/reports}">Reportes</a>
+    </nav>
+  </div>
+  <div class="topbar-user" sec:authorize="isAuthenticated()">
+    <span th:text="${#authentication.principal instanceof T(com.suckcc.pos.auth.PosUserPrincipal) ? #authentication.principal.displayName : #authentication.name}">Cajero</span>
+    <button type="button" class="btn btn-sm"
+            th:hx-get="@{/auth/pin-modal}"
+            hx-target="#modal-root"
+            hx-swap="outerHTML">Cambiar PIN</button>
+    <form th:action="@{/logout}" method="post" style="margin:0">
+      <button type="submit" class="btn btn-sm">Salir</button>
+    </form>
+  </div>
+</header>
+
+<main class="container">
+  <th:block th:replace="${content}"/>
+</main>
+
+<div id="toast-region" class="toast-region no-print" aria-live="polite"></div>
+<div id="modal-root"></div>
+</body>
+</html>

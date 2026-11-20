@@ -1,0 +1,9 @@
+{
+  "id": "91cfc5",
+  "title": "Foundation: Flyway + Postgres Compose baseline",
+  "description": "Scope: pom.xml, application.properties, compose.yaml. Add flyway-core + flyway-database-postgresql, set ddl-auto=validate, verify ./mvnw test boots with Postgres. Forbidden: Do not create domain tables yet or add Node/npm.",
+  "status": "done",
+  "priority": "critical",
+  "created_at": 1795135738,
+  "updated_at": 1795136058
+}

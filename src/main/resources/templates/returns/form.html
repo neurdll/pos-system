@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org"
+      th:replace="~{layout/base :: page('Devolución', ~{::section})}">
+<section class="stack" style="max-width: 760px;">
+  <div class="row-between">
+    <h1 class="card-title" style="font-size: 20px;"
+        th:text="${'Devolución · Ticket ' + sale.ticketNumber}">Devolución</h1>
+    <a th:href="@{/tickets}" class="btn">Volver a tickets</a>
+  </div>
+
+  <div th:if="${error}" class="badge badge-danger" th:text="${error}">Error</div>
+  <div th:if="${openShift == null}" class="badge badge-warning">
+    No hay un turno abierto. Abre un turno de caja antes de procesar una devolución.
+  </div>
+
+  <form th:action="@{/returns}" method="post" class="card stack">
+    <input type="hidden" name="saleId" th:value="${sale.id}"/>
+
+    <table>
+      <thead>
+      <tr>
+        <th>Producto</th>
+        <th class="num">Comprado</th>
+        <th class="num">Ya devuelto</th>
+        <th class="num">Precio c/u</th>
+        <th>Devolver</th>
+        <th>Reingresar stock</th>
+      </tr>
+      </thead>
+      <tbody>
+      <tr th:each="line : ${lines}">
+        <td>
+          <strong th:text="${line.saleItem.productNameSnapshot}">Producto</strong>
+          <div class="muted" th:text="${line.saleItem.skuSnapshot}">SKU</div>
+          <input type="hidden" name="saleItemId" th:value="${line.saleItem.id}"/>
+        </td>
+        <td class="num" th:text="${line.saleItem.qty}">1</td>
+        <td class="num" th:text="${line.alreadyReturnedQty}">0</td>
+        <td class="num" th:text="${@money.format(line.saleItem.unitPriceCents)}">$0.00</td>
+        <td style="width: 100px;">
+          <input type="number" name="qty" min="0" th:max="${line.remainingQty}"
+                 value="0" th:disabled="${line.remainingQty == 0}"/>
+        </td>
+        <td>
+          <input type="checkbox" name="restockId" th:value="${line.saleItem.id}"
+                 checked="checked" style="width: auto;" th:disabled="${line.remainingQty == 0}"/>
+        </td>
+      </tr>
+      </tbody>
+    </table>
+
+    <div class="form-grid">
+      <div>
+        <label for="refundMethod">Método de reembolso</label>
+        <select id="refundMethod" name="refundMethod">
+          <option th:each="m : ${methods}" th:value="${m}" th:text="${m}">CASH</option>
+        </select>
+      </div>
+      <div>
+        <label for="reason">Motivo *</label>
+        <input id="reason" name="reason" type="text" required placeholder="Ej. Producto dañado o cambio"/>
+      </div>
+    </div>
+
+    <div class="row">
+      <button type="submit" class="btn btn-danger" th:disabled="${openShift == null}">Confirmar devolución</button>
+      <a th:href="@{/tickets}" class="btn">Cancelar</a>
+    </div>
+  </form>
+</section>
+</html>

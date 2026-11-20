@@ -1,0 +1,17 @@
+{
+  "id": "680a09",
+  "title": "Inventory: Stock movement ledger (kardex) & manual adjustments",
+  "description": "Scope: V6__stock_movements.sql (SALE/RETURN/ADJUSTMENT/PURCHASE), inventory/*, templates/inventory/*. Log stock deltas on checkout and support manual adjustment/restock + kardex filter view. Forbidden: No supplier purchase-order workflows.",
+  "status": "done",
+  "priority": "medium",
+  "depends_on": [
+    "32b4dd",
+    "d5a454"
+  ],
+  "related": [
+    "e729fe",
+    "f322b7"
+  ],
+  "created_at": 1795135738,
+  "updated_at": 1795137476
+}

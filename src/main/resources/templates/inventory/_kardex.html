@@ -1,0 +1,24 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<body>
+<tbody th:fragment="rows" id="kardex-rows">
+  <tr th:if="${#lists.isEmpty(movements)}">
+    <td colspan="6" class="muted">Sin movimientos de inventario.</td>
+  </tr>
+  <tr th:each="m : ${movements}">
+    <td th:text="${#temporals.format(m.createdAt, 'yyyy-MM-dd HH:mm')}">Fecha</td>
+    <td>
+      <strong th:text="${m.productName}">Producto</strong>
+      <div class="muted" th:text="${m.sku}">SKU</div>
+    </td>
+    <td><span class="badge" th:text="${m.type}">SALE</span></td>
+    <td class="num">
+      <strong th:style="${m.qtyDelta > 0 ? 'color: var(--success)' : 'color: var(--danger)'}"
+              th:text="${m.qtyDelta > 0 ? '+' + m.qtyDelta : m.qtyDelta}">-1</strong>
+    </td>
+    <td th:text="${m.note ?: '—'}">—</td>
+    <td th:text="${m.actorName}">Usuario</td>
+  </tr>
+</tbody>
+</body>
+</html>

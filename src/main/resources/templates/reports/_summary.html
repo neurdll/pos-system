@@ -1,0 +1,124 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<body>
+<div th:fragment="content" id="report-content" class="stack">
+  <div class="form-grid">
+    <div class="card">
+      <div class="muted">Tickets del día</div>
+      <div style="font-size: 22px; font-weight: 700;" th:text="${daily.ticketCount}">0</div>
+    </div>
+    <div class="card">
+      <div class="muted">Ventas brutas</div>
+      <div style="font-size: 22px; font-weight: 700;" th:text="${@money.format(daily.grossSalesCents)}">$0.00</div>
+    </div>
+    <div class="card">
+      <div class="muted">Devoluciones</div>
+      <div style="font-size: 22px; font-weight: 700; color: var(--danger);"
+           th:text="${@money.format(daily.totalRefundsCents)}">$0.00</div>
+    </div>
+    <div class="card">
+      <div class="muted">Venta neta del día</div>
+      <div style="font-size: 22px; font-weight: 700; color: var(--success);"
+           th:text="${@money.format(daily.netSalesCents)}">$0.00</div>
+    </div>
+  </div>
+
+  <div class="pos-grid" style="grid-template-columns: 1fr 1fr;">
+    <div class="card stack">
+      <h2 class="card-title">Resumen del día por método de pago</h2>
+      <table>
+        <thead>
+        <tr>
+          <th>Método</th>
+          <th class="num">Cobrado</th>
+          <th class="num">Reembolsos</th>
+          <th class="num">Neto</th>
+        </tr>
+        </thead>
+        <tbody>
+        <tr th:each="row : ${daily.byTender}">
+          <td th:text="${row.method}">CASH</td>
+          <td class="num" th:text="${@money.format(row.salesCents)}">$0.00</td>
+          <td class="num" th:text="${@money.format(row.refundsCents)}">$0.00</td>
+          <td class="num"><strong th:text="${@money.format(row.netCents)}">$0.00</strong></td>
+        </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <div class="card stack" th:if="${shiftReport != null}">
+      <div class="row-between">
+        <h2 class="card-title"
+            th:text="${'Corte ' + (shiftReport.shift.status.name() == 'OPEN' ? 'X (Abierto)' : 'Z (Cerrado)') + ' · Turno #' + shiftReport.shift.id}">
+          Corte
+        </h2>
+        <span class="badge" th:text="${shiftReport.ticketCount + ' tickets'}">0 tickets</span>
+      </div>
+      <table>
+        <tbody>
+        <tr><td>Ventas brutas turno</td><td class="num" th:text="${@money.format(shiftReport.grossSalesCents)}">$0.00</td></tr>
+        <tr><td>Devoluciones turno</td><td class="num" th:text="${@money.format(shiftReport.totalRefundsCents)}">$0.00</td></tr>
+        <tr><td>Neto turno</td><td class="num"><strong th:text="${@money.format(shiftReport.netSalesCents)}">$0.00</strong></td></tr>
+        <tr><td>Efectivo esperado en caja</td><td class="num" th:text="${@money.format(shiftReport.cashSummary.expectedCashCents)}">$0.00</td></tr>
+        <tr th:if="${shiftReport.shift.varianceCents != null}">
+          <td>Diferencia al cierre</td>
+          <td class="num" th:text="${@money.format(shiftReport.shift.varianceCents)}">$0.00</td>
+        </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <div class="pos-grid" style="grid-template-columns: 1fr 1fr;">
+    <div class="card stack">
+      <h2 class="card-title">Productos más vendidos</h2>
+      <table>
+        <thead>
+        <tr>
+          <th>Producto</th>
+          <th class="num">Unidades</th>
+          <th class="num">Total</th>
+        </tr>
+        </thead>
+        <tbody>
+        <tr th:if="${#lists.isEmpty(daily.topProducts)}">
+          <td colspan="3" class="muted">Sin ventas en esta fecha.</td>
+        </tr>
+        <tr th:each="p : ${daily.topProducts}">
+          <td>
+            <strong th:text="${p.name}">Producto</strong>
+            <div class="muted" th:text="${p.sku}">SKU</div>
+          </td>
+          <td class="num" th:text="${p.unitsSold}">0</td>
+          <td class="num" th:text="${@money.format(p.grossCents)}">$0.00</td>
+        </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <div class="card stack">
+      <h2 class="card-title">Alertas de stock bajo</h2>
+      <table>
+        <thead>
+        <tr>
+          <th>SKU</th>
+          <th>Producto</th>
+          <th class="num">Stock</th>
+        </tr>
+        </thead>
+        <tbody>
+        <tr th:if="${#lists.isEmpty(daily.lowStock)}">
+          <td colspan="3" class="muted">Sin productos por debajo del umbral.</td>
+        </tr>
+        <tr th:each="item : ${daily.lowStock}">
+          <td><code th:text="${item.sku}">SKU</code></td>
+          <td th:text="${item.name}">Producto</td>
+          <td class="num"><span class="badge badge-danger" th:text="${item.stockQty}">0</span></td>
+        </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+</div>
+</body>
+</html>

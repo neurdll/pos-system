@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org"
+      th:replace="~{layout/base :: page(${productId == null ? 'Nuevo producto' : 'Editar producto'}, ~{::section})}">
+<section class="stack" style="max-width: 680px;">
+  <div class="row-between">
+    <h1 class="card-title" style="font-size: 20px;"
+        th:text="${productId == null ? 'Nuevo producto' : 'Editar producto'}">Producto</h1>
+    <a th:href="@{/catalog}" class="btn">Volver</a>
+  </div>
+
+  <form th:action="${productId == null} ? @{/catalog} : @{/catalog/{id}(id=${productId})}"
+        th:object="${productForm}"
+        method="post"
+        class="card stack">
+
+    <div class="form-grid">
+      <div>
+        <label for="sku">SKU *</label>
+        <input id="sku" type="text" th:field="*{sku}" required/>
+        <div class="muted" style="color: var(--danger);" th:if="${#fields.hasErrors('sku')}" th:errors="*{sku}"></div>
+      </div>
+
+      <div>
+        <label for="barcode">Código de barras</label>
+        <input id="barcode" type="text" th:field="*{barcode}"/>
+        <div class="muted" style="color: var(--danger);" th:if="${#fields.hasErrors('barcode')}" th:errors="*{barcode}"></div>
+      </div>
+    </div>
+
+    <div class="form-grid">
+      <div>
+        <label for="name">Nombre *</label>
+        <input id="name" type="text" th:field="*{name}" required/>
+        <div class="muted" style="color: var(--danger);" th:if="${#fields.hasErrors('name')}" th:errors="*{name}"></div>
+      </div>
+
+      <div>
+        <label for="category">Categoría</label>
+        <input id="category" type="text" th:field="*{category}"/>
+      </div>
+    </div>
+
+    <div class="form-grid">
+      <div>
+        <label for="price">Precio *</label>
+        <input id="price" type="number" step="0.01" min="0" th:field="*{price}" required/>
+        <div class="muted" style="color: var(--danger);" th:if="${#fields.hasErrors('price')}" th:errors="*{price}"></div>
+      </div>
+
+      <div>
+        <label for="taxPercent">IVA (%) *</label>
+        <input id="taxPercent" type="number" min="0" max="100" th:field="*{taxPercent}" required/>
+      </div>
+
+      <div>
+        <label for="stockQty">Stock *</label>
+        <input id="stockQty" type="number" th:field="*{stockQty}" required/>
+      </div>
+    </div>
+
+    <div class="row" style="gap: 20px;">
+      <label class="row" style="margin: 0; color: var(--text);">
+        <input type="checkbox" th:field="*{trackInventory}" style="width: auto;"/> Controlar inventario
+      </label>
+      <label class="row" style="margin: 0; color: var(--text);">
+        <input type="checkbox" th:field="*{active}" style="width: auto;"/> Activo
+      </label>
+    </div>
+
+    <div class="row">
+      <button type="submit" class="btn btn-primary">Guardar producto</button>
+      <a th:href="@{/catalog}" class="btn">Cancelar</a>
+    </div>
+  </form>
+</section>
+</html>

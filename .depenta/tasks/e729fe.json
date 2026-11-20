@@ -1,0 +1,17 @@
+{
+  "id": "e729fe",
+  "title": "Returns: Partial/full ticket refunds, cash-shift impact, restock",
+  "description": "Scope: V7__returns.sql (returns, return_items), returns/*, templates/returns/*. Select quantities from paid ticket, refund tender (cash affects active shift expected cash), restock + ledger entry, update sale status. Forbidden: No store-credit wallet system.",
+  "status": "done",
+  "priority": "medium",
+  "depends_on": [
+    "32b4dd",
+    "3fb88b",
+    "e85258"
+  ],
+  "related": [
+    "680a09"
+  ],
+  "created_at": 1795135738,
+  "updated_at": 1795137563
+}

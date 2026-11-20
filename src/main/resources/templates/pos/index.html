@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org"
+      th:replace="~{layout/base :: page('Mostrador', ~{::section})}">
+<section class="stack"
+         x-data
+         @keydown.f2.window.prevent="$refs.scanInput?.focus()"
+         @keydown.f4.window.prevent="document.getElementById('checkout-btn')?.click()">
+
+  <div th:if="${openShift == null}" class="card stack" style="max-width: 520px;">
+    <h1 class="card-title">Turno de caja cerrado</h1>
+    <p class="muted" style="margin: 0;">Para registrar ventas en mostrador primero debes abrir un turno de caja.</p>
+    <div>
+      <a th:href="@{/shifts}" class="btn btn-primary">Ir a abrir turno</a>
+    </div>
+  </div>
+
+  <div th:if="${openShift != null}" class="pos-grid">
+    <div class="card stack">
+      <div class="row-between">
+        <h1 class="card-title">Mostrador <span class="muted">(F2 escanear · F4 cobrar)</span></h1>
+        <span class="badge badge-success" th:text="${'Turno #' + openShift.id}">Turno #1</span>
+      </div>
+
+      <form th:hx-post="@{/pos/cart/scan}"
+            hx-target="#cart-panel"
+            hx-swap="outerHTML"
+            hx-on::after-request="if(event.detail.successful) { this.reset(); this.querySelector('input').focus(); }"
+            class="row">
+        <input x-ref="scanInput"
+               type="text"
+               name="code"
+               placeholder="Escanear código de barras o escribir SKU y Enter (F2)"
+               autofocus/>
+        <button type="submit" class="btn btn-primary">Agregar</button>
+      </form>
+
+      <div>
+        <input type="search"
+               name="q"
+               th:value="${q}"
+               placeholder="Filtrar productos por nombre, SKU o código..."
+               th:hx-get="@{/pos/products}"
+               hx-trigger="input changed delay:200ms, search"
+               hx-target="#pos-product-grid"
+               hx-swap="outerHTML"/>
+      </div>
+
+      <div th:replace="~{pos/_catalog :: grid}"></div>
+    </div>
+
+    <div th:replace="~{pos/_cart :: panel}"></div>
+  </div>
+</section>
+</html>

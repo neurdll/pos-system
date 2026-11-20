@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<body>
+<div th:fragment="modal" id="modal-root" class="modal-backdrop"
+     x-data @keydown.escape.window="$el.remove()">
+  <div class="modal-card stack" @click.outside="document.getElementById('modal-root').innerHTML = ''">
+    <div class="row-between">
+      <h2 class="card-title">Cambiar cajero por PIN</h2>
+      <button type="button" class="btn btn-sm"
+              onclick="document.getElementById('modal-root').innerHTML = ''">Cerrar</button>
+    </div>
+
+    <div th:if="${error}" class="badge badge-danger" th:text="${error}">PIN inválido</div>
+
+    <form th:hx-post="@{/auth/switch-pin}"
+          hx-target="#modal-root"
+          hx-swap="outerHTML"
+          class="stack">
+      <div>
+        <label for="switch-pin-input">PIN del cajero</label>
+        <input id="switch-pin-input" name="pin" type="password" inputmode="numeric"
+               autocomplete="off" autofocus required/>
+      </div>
+      <button type="submit" class="btn btn-primary btn-block">Cambiar operador</button>
+    </form>
+  </div>
+</div>
+</body>
+</html>
